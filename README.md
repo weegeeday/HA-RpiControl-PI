@@ -84,3 +84,13 @@ sudo cp systemd/picontrol.service /etc/systemd/system/picontrol.service
 sudo systemctl daemon-reload
 sudo systemctl enable --now picontrol.service
 ```
+
+## Fix permissions if service fails to start
+
+If you see `CHDIR` or permission errors, ensure the install directory is readable by the service user:
+
+```bash
+sudo chown -R tep:tep /opt/picontrol
+sudo chmod -R u+rwX,go+rX /opt/picontrol
+sudo systemctl restart picontrol.service
+```

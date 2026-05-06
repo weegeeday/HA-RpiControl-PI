@@ -59,6 +59,9 @@ if [ ! -f "$INSTALL_DIR/requirements.txt" ]; then
   exit 1
 fi
 
+chown -R "$SERVICE_USER":"$SERVICE_USER" "$INSTALL_DIR"
+chmod -R u+rwX,go+rX "$INSTALL_DIR"
+
 python3 -m venv "$INSTALL_DIR/.venv"
 "$INSTALL_DIR/.venv/bin/pip" install -r "$INSTALL_DIR/requirements.txt"
 
