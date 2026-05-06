@@ -15,10 +15,10 @@ pip install -r requirements.txt
 cp config.example.yaml config.yaml
 ```
 
-If you see a `python3-venv` error:
+If you see a `python3-venv` error or want to use CEC features (`cec-client`):
 
 ```bash
-sudo apt-get install -y python3-venv
+sudo apt-get install -y python3-venv cec-utils
 ```
 
 ## Permissions (required)

@@ -97,6 +97,24 @@ async def reboot_pi() -> dict[str, Any]:
     return {"status": "rebooting"}
 
 
+@app.post("/cec/on", dependencies=[Depends(require_token)])
+async def cec_on() -> dict[str, Any]:
+    process = subprocess.run("echo 'on 0' | cec-client -s -d 1", shell=True, capture_output=True, text=True, check=False)
+    return {"status": "ok", "output": process.stdout}
+
+
+@app.post("/cec/off", dependencies=[Depends(require_token)])
+async def cec_off() -> dict[str, Any]:
+    process = subprocess.run("echo 'standby 0' | cec-client -s -d 1", shell=True, capture_output=True, text=True, check=False)
+    return {"status": "ok", "output": process.stdout}
+
+
+@app.post("/cec/active_source", dependencies=[Depends(require_token)])
+async def cec_active_source() -> dict[str, Any]:
+    process = subprocess.run("echo 'as' | cec-client -s -d 1", shell=True, capture_output=True, text=True, check=False)
+    return {"status": "ok", "output": process.stdout}
+
+
 @app.post("/ssh", dependencies=[Depends(require_token)])
 async def run_ssh(payload: SshRequest) -> dict[str, Any]:
     validate_ssh_request(payload)

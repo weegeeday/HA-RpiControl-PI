@@ -26,10 +26,15 @@ for cmd in git rsync python3; do
 done
 
 if ! python3 -m venv /tmp/picontrol-venv-check >/dev/null 2>&1; then
-  echo "python3-venv is required. Install with: sudo apt-get install -y python3-venv"
+  echo "python3-venv is required. Install with: sudo apt-get install -y python3-venv cec-utils"
   exit 1
 fi
 rm -rf /tmp/picontrol-venv-check
+
+if ! command -v cec-client >/dev/null 2>&1; then
+  echo "cec-utils is required for HDMI CEC control. Install with: sudo apt-get install -y cec-utils"
+  # Don't fail the setup if only cec-utils is missing, just let the user know.
+fi
 
 if ! id -u "$SERVICE_USER" >/dev/null 2>&1; then
   echo "Service user '$SERVICE_USER' does not exist."
