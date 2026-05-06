@@ -27,6 +27,16 @@ if ! python3 -m venv /tmp/picontrol-venv-check >/dev/null 2>&1; then
 fi
 rm -rf /tmp/picontrol-venv-check
 
+if ! id -u "$SERVICE_USER" >/dev/null 2>&1; then
+  INVOKING_USER=${SUDO_USER:-""}
+  if [ -n "$INVOKING_USER" ] && id -u "$INVOKING_USER" >/dev/null 2>&1; then
+    SERVICE_USER="$INVOKING_USER"
+  else
+    echo "Service user '$SERVICE_USER' does not exist. Set SERVICE_USER to a valid user."
+    exit 1
+  fi
+fi
+
 if [ -f "./requirements.txt" ]; then
   SRC_DIR="$(pwd)"
 elif [ -f "./PI/requirements.txt" ]; then

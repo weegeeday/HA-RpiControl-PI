@@ -67,6 +67,12 @@ Override the repo URL if you host a fork:
 sudo REPO_URL="https://github.com/yourname/HA-RpiControl-PI.git" ./setup.sh
 ```
 
+Override the service user (defaults to `pi` or the invoking user if `pi` is missing):
+
+```bash
+sudo SERVICE_USER="tep" ./setup.sh
+```
+
 The script can optionally apply permissions for `/boot/firmware/fullpageos.txt`.
 
 ## Systemd unit (optional)
