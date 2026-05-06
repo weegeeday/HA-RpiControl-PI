@@ -1,0 +1,7 @@
+# Copy to config.yaml and adjust values.
+api_token: "CHANGE_ME"
+fullpageos_path: "/boot/firmware/fullpageos.txt"
+allowed_ssh_hosts: []
+allowed_ssh_users: []
+# Regex patterns matched against the full command string.
+allowed_ssh_commands: []

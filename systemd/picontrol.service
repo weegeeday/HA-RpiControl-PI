@@ -1,0 +1,13 @@
+[Unit]
+Description=Pi Control Service
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/opt/picontrol
+ExecStart=/opt/picontrol/.venv/bin/uvicorn app:app --host 0.0.0.0 --port 8129
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
