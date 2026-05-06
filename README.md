@@ -53,6 +53,8 @@ If you want to run it from anywhere, the script will clone the repo automaticall
 sudo ./setup.sh
 ```
 
+The script searches the repo for `requirements.txt` and installs from that folder.
+
 Override the repo URL if you host a fork:
 
 ```bash

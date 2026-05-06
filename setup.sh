@@ -28,14 +28,12 @@ elif [ -f "./PI/requirements.txt" ]; then
 else
   TMP_DIR=$(mktemp -d)
   git clone "$REPO_URL" "$TMP_DIR"
-  if [ -f "$TMP_DIR/requirements.txt" ]; then
-    SRC_DIR="$TMP_DIR"
-  elif [ -f "$TMP_DIR/PI/requirements.txt" ]; then
-    SRC_DIR="$TMP_DIR/PI"
-  else
+  REQ_PATH=$(find "$TMP_DIR" -maxdepth 4 -name requirements.txt -print -quit)
+  if [ -z "$REQ_PATH" ]; then
     echo "requirements.txt not found in cloned repo."
     exit 1
   fi
+  SRC_DIR="$(dirname "$REQ_PATH")"
 fi
 
 mkdir -p "$INSTALL_DIR"
