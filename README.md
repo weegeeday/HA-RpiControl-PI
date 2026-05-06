@@ -15,6 +15,12 @@ pip install -r requirements.txt
 cp config.example.yaml config.yaml
 ```
 
+If you see a `python3-venv` error:
+
+```bash
+sudo apt-get install -y python3-venv
+```
+
 ## Permissions (required)
 
 ### Allow editing `/boot/firmware/fullpageos.txt`

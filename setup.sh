@@ -21,6 +21,12 @@ for cmd in git rsync python3; do
   fi
 done
 
+if ! python3 -m venv /tmp/picontrol-venv-check >/dev/null 2>&1; then
+  echo "python3-venv is required. Install with: sudo apt-get install -y python3-venv"
+  exit 1
+fi
+rm -rf /tmp/picontrol-venv-check
+
 if [ -f "./requirements.txt" ]; then
   SRC_DIR="$(pwd)"
 elif [ -f "./PI/requirements.txt" ]; then
