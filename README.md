@@ -47,10 +47,16 @@ chmod +x setup.sh
 sudo ./setup.sh
 ```
 
-If you want to run it from anywhere, pass a repo URL:
+If you want to run it from anywhere, the script will clone the repo automatically (default URL can be overridden):
 
 ```bash
-sudo REPO_URL="https://github.com/weegeeday/HA-RpiControl-PI.git" ./setup.sh
+sudo ./setup.sh
+```
+
+Override the repo URL if you host a fork:
+
+```bash
+sudo REPO_URL="https://github.com/yourname/HA-RpiControl-PI.git" ./setup.sh
 ```
 
 The script can optionally apply permissions for `/boot/firmware/fullpageos.txt`.

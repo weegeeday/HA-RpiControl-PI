@@ -4,7 +4,7 @@ set -euo pipefail
 INSTALL_DIR=${INSTALL_DIR:-/opt/picontrol}
 SERVICE_USER=${SERVICE_USER:-pi}
 SERVICE_PORT=${SERVICE_PORT:-8129}
-REPO_URL=${REPO_URL:-""}
+REPO_URL=${REPO_URL:-"https://github.com/weegeeday/HA-RpiControl-PI.git"}
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Please run as root (sudo ./setup.sh)"
@@ -14,20 +14,37 @@ fi
 read -rp "API token for service (leave blank for none): " API_TOKEN
 read -rp "Apply permissions for /boot/firmware/fullpageos.txt? (y/N): " APPLY_PERMS
 
-if [ ! -f "./requirements.txt" ]; then
-  if [ -z "$REPO_URL" ]; then
-    echo "requirements.txt not found. Run from repo root or set REPO_URL to clone."
+for cmd in git rsync python3; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Missing required command: $cmd"
     exit 1
   fi
+done
+
+if [ -f "./requirements.txt" ]; then
+  SRC_DIR="$(pwd)"
+elif [ -f "./PI/requirements.txt" ]; then
+  SRC_DIR="$(pwd)/PI"
+else
   TMP_DIR=$(mktemp -d)
   git clone "$REPO_URL" "$TMP_DIR"
-  SRC_DIR="$TMP_DIR"
-else
-  SRC_DIR="$(pwd)"
+  if [ -f "$TMP_DIR/requirements.txt" ]; then
+    SRC_DIR="$TMP_DIR"
+  elif [ -f "$TMP_DIR/PI/requirements.txt" ]; then
+    SRC_DIR="$TMP_DIR/PI"
+  else
+    echo "requirements.txt not found in cloned repo."
+    exit 1
+  fi
 fi
 
 mkdir -p "$INSTALL_DIR"
 rsync -a --exclude '.venv' --exclude '__pycache__' "$SRC_DIR/" "$INSTALL_DIR/"
+
+if [ ! -f "$INSTALL_DIR/requirements.txt" ]; then
+  echo "requirements.txt missing after sync; aborting."
+  exit 1
+fi
 
 python3 -m venv "$INSTALL_DIR/.venv"
 "$INSTALL_DIR/.venv/bin/pip" install -r "$INSTALL_DIR/requirements.txt"
