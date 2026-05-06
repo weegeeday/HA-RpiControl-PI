@@ -4,6 +4,7 @@ set -euo pipefail
 INSTALL_DIR=${INSTALL_DIR:-/opt/picontrol}
 SERVICE_USER=${SERVICE_USER:-pi}
 SERVICE_PORT=${SERVICE_PORT:-8129}
+REPO_URL=${REPO_URL:-""}
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Please run as root (sudo ./setup.sh)"
@@ -13,8 +14,20 @@ fi
 read -rp "API token for service (leave blank for none): " API_TOKEN
 read -rp "Apply permissions for /boot/firmware/fullpageos.txt? (y/N): " APPLY_PERMS
 
+if [ ! -f "./requirements.txt" ]; then
+  if [ -z "$REPO_URL" ]; then
+    echo "requirements.txt not found. Run from repo root or set REPO_URL to clone."
+    exit 1
+  fi
+  TMP_DIR=$(mktemp -d)
+  git clone "$REPO_URL" "$TMP_DIR"
+  SRC_DIR="$TMP_DIR"
+else
+  SRC_DIR="$(pwd)"
+fi
+
 mkdir -p "$INSTALL_DIR"
-rsync -a --exclude '.venv' --exclude '__pycache__' ./ "$INSTALL_DIR/"
+rsync -a --exclude '.venv' --exclude '__pycache__' "$SRC_DIR/" "$INSTALL_DIR/"
 
 python3 -m venv "$INSTALL_DIR/.venv"
 "$INSTALL_DIR/.venv/bin/pip" install -r "$INSTALL_DIR/requirements.txt"

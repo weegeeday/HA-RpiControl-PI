@@ -47,6 +47,12 @@ chmod +x setup.sh
 sudo ./setup.sh
 ```
 
+If you want to run it from anywhere, pass a repo URL:
+
+```bash
+sudo REPO_URL="https://github.com/weegeeday/HA-RpiControl-PI.git" ./setup.sh
+```
+
 The script can optionally apply permissions for `/boot/firmware/fullpageos.txt`.
 
 ## Systemd unit (optional)
