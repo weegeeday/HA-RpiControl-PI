@@ -2,7 +2,11 @@
 set -euo pipefail
 
 INSTALL_DIR=${INSTALL_DIR:-/opt/picontrol}
-SERVICE_USER=${SERVICE_USER:-pi}
+DEFAULT_USER=${SUDO_USER:-""}
+if [ -z "$DEFAULT_USER" ]; then
+  DEFAULT_USER="$(id -un)"
+fi
+SERVICE_USER=${SERVICE_USER:-"$DEFAULT_USER"}
 SERVICE_PORT=${SERVICE_PORT:-8129}
 REPO_URL=${REPO_URL:-"https://github.com/weegeeday/HA-RpiControl-PI.git"}
 
@@ -28,13 +32,8 @@ fi
 rm -rf /tmp/picontrol-venv-check
 
 if ! id -u "$SERVICE_USER" >/dev/null 2>&1; then
-  INVOKING_USER=${SUDO_USER:-""}
-  if [ -n "$INVOKING_USER" ] && id -u "$INVOKING_USER" >/dev/null 2>&1; then
-    SERVICE_USER="$INVOKING_USER"
-  else
-    echo "Service user '$SERVICE_USER' does not exist. Set SERVICE_USER to a valid user."
-    exit 1
-  fi
+  echo "Service user '$SERVICE_USER' does not exist."
+  exit 1
 fi
 
 if [ -f "./requirements.txt" ]; then
@@ -97,7 +96,9 @@ systemctl enable --now picontrol.service
 
 if [[ "${APPLY_PERMS,,}" == "y" || "${APPLY_PERMS,,}" == "yes" ]]; then
   groupadd -f picontrol
-  usermod -a -G picontrol "$SERVICE_USER"
+  if id -u "$SERVICE_USER" >/dev/null 2>&1; then
+    usermod -a -G picontrol "$SERVICE_USER"
+  fi
   chgrp picontrol /boot/firmware/fullpageos.txt
   chmod 664 /boot/firmware/fullpageos.txt
   echo "Updated permissions for /boot/firmware/fullpageos.txt."
